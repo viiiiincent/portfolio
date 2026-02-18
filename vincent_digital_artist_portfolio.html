@@ -320,13 +320,45 @@
 
     let model;
 
+    const models = [
+        'UnderArmour.glb',
+        'Spyder.glb',
+        'Giordano slick.glb'
+    ];
+
+    let currentModelIndex = 0;
+
     const loader = new THREE.GLTFLoader();
-    loader.load('UnderArmour.glb', function (gltf) {
-        model = gltf.scene;
-        scene.add(model);
-    }, undefined, function (error) {
-        console.error(error);
-    });
+
+    function loadModel(index) {
+        if (model) {
+            scene.remove(model);
+        }
+
+        loader.load(models[index], function (gltf) {
+            model = gltf.scene;
+
+            // Auto scale based on bounding box
+            const box = new THREE.Box3().setFromObject(model);
+            const size = new THREE.Vector3();
+            box.getSize(size);
+            const maxDim = Math.max(size.x, size.y, size.z);
+            const scale = 3 / maxDim;
+            model.scale.set(scale, scale, scale);
+
+            // Center model
+            box.setFromObject(model);
+            const center = new THREE.Vector3();
+            box.getCenter(center);
+            model.position.sub(center);
+
+            scene.add(model);
+        }, undefined, function (error) {
+            console.error(error);
+        });
+    }
+
+    loadModel(currentModelIndex);
 
     let isDragging = false;
     let previousMousePosition = { x: 0, y: 0 };
@@ -350,12 +382,40 @@
     // Mobile support
     canvas.addEventListener('touchstart', () => isDragging = true);
     canvas.addEventListener('touchend', () => isDragging = false);
-    canvas.addEventListener('touchmove', (e) => {
-        if (isDragging && model) {
-            const touch = e.touches[0];
-            model.rotation.y += touch.movementX * 0.005;
-            model.rotation.x += touch.movementY * 0.005;
-        }
+
+    // Next / Previous buttons for models
+    const nextModelBtn = document.createElement('button');
+    nextModelBtn.innerHTML = 'Next ▶';
+    nextModelBtn.style.marginTop = '20px';
+    nextModelBtn.style.padding = '10px 20px';
+    nextModelBtn.style.background = '#a855f7';
+    nextModelBtn.style.color = '#fff';
+    nextModelBtn.style.border = 'none';
+    nextModelBtn.style.borderRadius = '20px';
+    nextModelBtn.style.cursor = 'pointer';
+
+    const prevModelBtn = document.createElement('button');
+    prevModelBtn.innerHTML = '◀ Prev';
+    prevModelBtn.style.marginRight = '10px';
+    prevModelBtn.style.padding = '10px 20px';
+    prevModelBtn.style.background = '#a855f7';
+    prevModelBtn.style.color = '#fff';
+    prevModelBtn.style.border = 'none';
+    prevModelBtn.style.borderRadius = '20px';
+    prevModelBtn.style.cursor = 'pointer';
+
+    canvas.parentElement.appendChild(document.createElement('br'));
+    canvas.parentElement.appendChild(prevModelBtn);
+    canvas.parentElement.appendChild(nextModelBtn);
+
+    nextModelBtn.addEventListener('click', () => {
+        currentModelIndex = (currentModelIndex + 1) % models.length;
+        loadModel(currentModelIndex);
+    });
+
+    prevModelBtn.addEventListener('click', () => {
+        currentModelIndex = (currentModelIndex - 1 + models.length) % models.length;
+        loadModel(currentModelIndex);
     });
 
     function animate() {
