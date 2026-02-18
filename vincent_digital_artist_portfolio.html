@@ -223,19 +223,42 @@
 </footer>
 
 <div class="modal" id="imageModal">
+    <button id="prevBtn" style="position:absolute;left:5%;font-size:40px;background:none;border:none;color:white;cursor:pointer;">❮</button>
     <img id="modalImg" src="" alt="Preview">
+    <button id="nextBtn" style="position:absolute;right:5%;font-size:40px;background:none;border:none;color:white;cursor:pointer;">❯</button>
 </div>
 
 <script>
-    const cards = document.querySelectorAll('.card img');
+    const images = document.querySelectorAll('.card img');
     const modal = document.getElementById('imageModal');
     const modalImg = document.getElementById('modalImg');
+    const nextBtn = document.getElementById('nextBtn');
+    const prevBtn = document.getElementById('prevBtn');
 
-    cards.forEach(img => {
+    let currentIndex = 0;
+
+    function showImage(index) {
+        modal.classList.add('active');
+        modalImg.src = images[index].src;
+        currentIndex = index;
+    }
+
+    images.forEach((img, index) => {
         img.addEventListener('click', () => {
-            modal.classList.add('active');
-            modalImg.src = img.src;
+            showImage(index);
         });
+    });
+
+    nextBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        currentIndex = (currentIndex + 1) % images.length;
+        modalImg.src = images[currentIndex].src;
+    });
+
+    prevBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        currentIndex = (currentIndex - 1 + images.length) % images.length;
+        modalImg.src = images[currentIndex].src;
     });
 
     modal.addEventListener('click', () => {
