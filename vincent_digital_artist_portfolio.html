@@ -321,9 +321,10 @@
     let model;
 
     const models = [
-       'UnderArmour.glb',
-        'Spyder.glb',
-        'Giordano slick.glb'
+        'UnderArmour.glb',
+        'Giordano slick.glb',
+        'Spyder.glb'
+        // 'ThirdModel.glb'
     ];
 
     let currentModelIndex = 0;
@@ -379,33 +380,40 @@
         previousMousePosition = { x: e.offsetX, y: e.offsetY };
     });
 
-    // Mobile support (Improved Touch Rotation)
-    let previousTouchPosition = { x: 0, y: 0 };
-
-    canvas.addEventListener('touchstart', (e) => {
-        isDragging = true;
-        const touch = e.touches[0];
-        previousTouchPosition = { x: touch.clientX, y: touch.clientY };
-    });
-
-    canvas.addEventListener('touchend', () => {
-        isDragging = false;
-    });
-
-    canvas.addEventListener('touchmove', (e) => {
-        if (!isDragging || !model) return;
-
-        const touch = e.touches[0];
-        const deltaX = touch.clientX - previousTouchPosition.x;
-        const deltaY = touch.clientY - previousTouchPosition.y;
-
-        model.rotation.y += deltaX * 0.01;
-        model.rotation.x += deltaY * 0.01;
-
-        previousTouchPosition = { x: touch.clientX, y: touch.clientY };
-    });
+    // Mobile support
+    canvas.addEventListener('touchstart', () => isDragging = true);
+    canvas.addEventListener('touchend', () => isDragging = false);
 
     // Next / Previous buttons for models
+    const nextModelBtn = document.createElement('button');
+    nextModelBtn.innerHTML = 'Next ▶';
+    nextModelBtn.style.marginTop = '20px';
+    nextModelBtn.style.padding = '10px 20px';
+    nextModelBtn.style.background = '#a855f7';
+    nextModelBtn.style.color = '#fff';
+    nextModelBtn.style.border = 'none';
+    nextModelBtn.style.borderRadius = '20px';
+    nextModelBtn.style.cursor = 'pointer';
+
+    const prevModelBtn = document.createElement('button');
+    prevModelBtn.innerHTML = '◀ Prev';
+    prevModelBtn.style.marginRight = '10px';
+    prevModelBtn.style.padding = '10px 20px';
+    prevModelBtn.style.background = '#a855f7';
+    prevModelBtn.style.color = '#fff';
+    prevModelBtn.style.border = 'none';
+    prevModelBtn.style.borderRadius = '20px';
+    prevModelBtn.style.cursor = 'pointer';
+
+    canvas.parentElement.appendChild(document.createElement('br'));
+    canvas.parentElement.appendChild(prevModelBtn);
+    canvas.parentElement.appendChild(nextModelBtn);
+
+    nextModelBtn.addEventListener('click', () => {
+        currentModelIndex = (currentModelIndex + 1) % models.length;
+        loadModel(currentModelIndex);
+    });
+
     prevModelBtn.addEventListener('click', () => {
         currentModelIndex = (currentModelIndex - 1 + models.length) % models.length;
         loadModel(currentModelIndex);
