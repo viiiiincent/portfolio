@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Start a Project</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #111;
+            color: white;
+            padding: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        form {
+            max-width: 600px;
+            margin: auto;
+            background: #1a1a1a;
+            padding: 25px;
+            border-radius: 12px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 8px;
+            border: none;
+        }
+
+        textarea {
+            height: 100px;
+        }
+
+        .qr-box {
+            width: 200px;
+            height: 200px;
+            background: #333;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+        }
+
+        .note {
+            background: #222;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 12px;
+            background: #00bfff;
+            border: none;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 8px;
+            width: 100%;
+        }
+
+        button:hover {
+            background: #009acd;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Start a Project</h1>
+
+<form action="https://formspree.io/f/YOUR_FORM_ID" method="POST" enctype="multipart/form-data">
+
+    <label>Full Name</label>
+    <input type="text" name="name" required>
+
+    <label>Email Address</label>
+    <input type="email" name="email" required>
+
+    <label>Type of Project</label>
+    <select name="project_type" required>
+        <option value="">Select</option>
+        <option value="3D Product Art">3D Product Art</option>
+        <option value="Digital Art">Digital Art</option>
+        <option value="Painting">Painting</option>
+    </select>
+
+    <label>Project Details</label>
+    <textarea name="details" required></textarea>
+
+    <div class="note">
+        <strong>Commission Policy:</strong><br><br>
+        • Minimum ₱100 down payment required for confirmation.<br>
+        • Final price will depend on complexity and will be discussed after confirmation.<br>
+        • No work will begin until down payment is received.
+    </div>
+
+    <div class="qr-box">
+        <span>QR CODE HERE</span>
+    </div>
+
+    <label>Upload Payment Screenshot (Required)</label>
+    <input type="file" name="payment_proof" accept="image/*" required>
+
+    <button type="submit">Submit Project Request</button>
+
+</form>
+
+</body>
+</html>
