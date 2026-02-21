@@ -117,47 +117,43 @@ const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 async function submitForm(event) {
     event.preventDefault();
 
+    console.log("Submitting form...");
+
     const name = document.getElementById('name').value;
     const email = document.getElementById('email').value;
     const project_type = document.getElementById('project_type').value;
     const details = document.getElementById('details').value;
     const file = document.getElementById('payment_proof').files[0];
 
-    if (!file) {
-        alert("Please upload payment screenshot.");
-        return;
-    }
-
     const fileName = Date.now() + "_" + file.name;
 
-    // Upload file to Supabase Storage
     const { error: uploadError } = await supabase
         .storage
-        .from('Payments')
+        .from('Payment') // exact bucket name
         .upload(fileName, file);
 
     if (uploadError) {
-        alert("File upload failed.");
-        console.error(uploadError);
+        console.error("UPLOAD ERROR:", uploadError);
+        alert(uploadError.message);
         return;
     }
 
-    const imageUrl = supabaseUrl + "/storage/v1/object/public/Payments/" + fileName;
+    const imageUrl = `${supabaseUrl}/storage/v1/object/public/Payment/${fileName}`;
 
-    // Insert data into database
-    const { error } = await supabase
-        .from('Orders')
+    const { error: insertError } = await supabase
+        .from('Orders') // exact table name
         .insert([
             { name, email, project_type, details, payment_image: imageUrl }
         ]);
 
-    if (error) {
-        alert("Error saving data.");
-        console.error(error);
-    } else {
-        alert("Project request submitted successfully!");
-        window.location.href = "thankyou.html";
+    if (insertError) {
+        console.error("INSERT ERROR:", insertError);
+        alert(insertError.message);
+        return;
     }
+
+    alert("Project request submitted successfully!");
+    window.location.href = "thankyou.html";
 }
 </script>
 
