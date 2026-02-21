@@ -140,7 +140,7 @@ async function submitForm(event) {
 
     const imageUrl = `${supabasUrl}/storage/v1/object/public/Payments/${fileName}`;
 
-    const { error: insertError } = await supabase
+    const { error: insertError } = await supabas
         .from('Orders') // exact table name
         .insert([
             { name, email, project_type, details, payment_image: imageUrl }
