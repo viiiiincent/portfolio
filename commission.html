@@ -129,7 +129,7 @@ async function submitForm(event) {
 
     const { error: uploadError } = await supabase
         .storage
-        .from('Payment') // exact bucket name
+        .from('Payments') // exact bucket name
         .upload(fileName, file);
 
     if (uploadError) {
@@ -138,7 +138,7 @@ async function submitForm(event) {
         return;
     }
 
-    const imageUrl = `${supabasUrl}/storage/v1/object/public/Payment/${fileName}`;
+    const imageUrl = `${supabasUrl}/storage/v1/object/public/Payments/${fileName}`;
 
     const { error: insertError } = await supabase
         .from('Orders') // exact table name
