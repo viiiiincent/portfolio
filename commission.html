@@ -3,8 +3,10 @@
 <head>
     <title>Start a Project</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <style>
         body {
+            margin: 0;
             font-family: Arial, sans-serif;
             background: #111;
             color: white;
@@ -42,17 +44,6 @@
             height: 100px;
         }
 
-        .qr-box {
-            width: 200px;
-            height: 200px;
-            background: #333;
-            margin: 20px auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 10px;
-        }
-
         .note {
             background: #222;
             padding: 15px;
@@ -82,16 +73,16 @@
 
 <h1>Start a Project</h1>
 
-<form action="https://formspree.io/f/xnjbbblr" method="POST" enctype="multipart/form-data">
-    
+<form onsubmit="submitForm(event)">
+
     <label>Full Name</label>
-    <input type="text" name="name" required>
+    <input type="text" id="name" required>
 
     <label>Email Address</label>
-    <input type="email" name="email" required>
+    <input type="email" id="email" required>
 
     <label>Type of Project</label>
-    <select name="project_type" required>
+    <select id="project_type" required>
         <option value="">Select</option>
         <option value="3D Product Art">3D Product Art</option>
         <option value="Digital Art">Digital Art</option>
@@ -99,25 +90,76 @@
     </select>
 
     <label>Project Details</label>
-    <textarea name="details" required></textarea>
+    <textarea id="details" required></textarea>
 
     <div class="note">
         <strong>Commission Policy:</strong><br><br>
         • Minimum ₱100 down payment required for confirmation.<br>
-        • Final price will depend on complexity and will be discussed after confirmation.<br>
-        • No work will begin until down payment is received.
+        • Final price depends on complexity and will be discussed after confirmation.<br>
+        • No work will begin until down payment is verified.
     </div>
 
-    <div class="qr-box">
-        <span>QR CODE HERE</span>
-    </div>
-
-    <label>Upload Payment Screenshot (Required)</label>
-    <input type="file" name="payment_proof" accept="image/*" required>
+    <label>Upload Payment Screenshot</label>
+    <input type="file" id="payment_proof" accept="image/*" required>
 
     <button type="submit">Submit Project Request</button>
 
 </form>
+
+<!-- Supabase Script -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const supabaseUrl = 'sb_publishable_Hbr28fB0A-_7UmJkrJh7Hw_LUFBrsg6';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNvbmx5eXdxanlvcnhkemthZnJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2NzIxOTMsImV4cCI6MjA4NzI0ODE5M30.tY5sAbtVl02ypwzdB1CEWyRnhXWLy0eLGjKWxsAP-zY';
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+async function submitForm(event) {
+    event.preventDefault();
+
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const project_type = document.getElementById('project_type').value;
+    const details = document.getElementById('details').value;
+    const file = document.getElementById('payment_proof').files[0];
+
+    if (!file) {
+        alert("Please upload payment screenshot.");
+        return;
+    }
+
+    const fileName = Date.now() + "_" + file.name;
+
+    // Upload file to Supabase Storage
+    const { error: uploadError } = await supabase
+        .storage
+        .from('Payments')
+        .upload(fileName, file);
+
+    if (uploadError) {
+        alert("File upload failed.");
+        console.error(uploadError);
+        return;
+    }
+
+    const imageUrl = supabaseUrl + "/storage/v1/object/public/Payments/" + fileName;
+
+    // Insert data into database
+    const { error } = await supabase
+        .from('Orders')
+        .insert([
+            { name, email, project_type, details, payment_image: imageUrl }
+        ]);
+
+    if (error) {
+        alert("Error saving data.");
+        console.error(error);
+    } else {
+        alert("Project request submitted successfully!");
+        window.location.href = "thankyou.html";
+    }
+}
+</script>
 
 </body>
 </html>
