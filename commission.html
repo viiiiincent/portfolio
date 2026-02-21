@@ -127,7 +127,7 @@ async function submitForm(event) {
 
     const fileName = Date.now() + "_" + file.name;
 
-    const { error: uploadError } = await supabase
+    const { error: uploadError } = await supabas
         .storage
         .from('Payments') // exact bucket name
         .upload(fileName, file);
