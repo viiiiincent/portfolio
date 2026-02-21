@@ -112,7 +112,7 @@
 <script>
 const supabasUrl = 'https://conlyywqjyorxdzkafrv.supabase.co';
 const supabasKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNvbmx5eXdxanlvcnhkemthZnJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2NzIxOTMsImV4cCI6MjA4NzI0ODE5M30.tY5sAbtVl02ypwzdB1CEWyRnhXWLy0eLGjKWxsAP-zY';
-const supabas = window.supabase.createClient(supabasUrl, supabasKey);
+const supabase = window.supabase.createClient(supabasUrl, supabasKey);
 
 async function submitForm(event) {
     event.preventDefault();
@@ -129,7 +129,7 @@ async function submitForm(event) {
 
     const { error: uploadError } = await supabase
         .storage
-        .from('Payments') // exact bucket name
+        .from('Payment') // exact bucket name
         .upload(fileName, file);
 
     if (uploadError) {
@@ -138,7 +138,7 @@ async function submitForm(event) {
         return;
     }
 
-    const imageUrl = `${supabaseUrl}/storage/v1/object/public/Payments/${fileName}`;
+    const imageUrl = `${supabasUrl}/storage/v1/object/public/Payment/${fileName}`;
 
     const { error: insertError } = await supabase
         .from('Orders') // exact table name
@@ -156,6 +156,5 @@ async function submitForm(event) {
     window.location.href = "thankyou.html";
 }
 </script>
-
 </body>
 </html>
